@@ -135,3 +135,38 @@ To destroy the resources, use `terraform destroy`.An execution plan shows that t
 After inputting yes, the EC2 instance is removed from the AWS environment and a summary is displayed. 
 
 
+### Remote state management 
+
+Add the following backend s3 block in main.tf scripts, specifying the S3 bucket and object key 
+for the state file
+
+```
+terraform {
+  backend "s3" {
+    bucket = "terraform-scripts-state"
+    key    = "s3-website.tfstate"
+    region = "us-east-1"
+  }
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+    }
+  }
+}
+```
+
+Then once `terraform init` is run, the backend should be initialized. Once we run `terraform apply` we should 
+see the .tfstate file created in the bucket. We can check this via the commands below.
+
+
+```bash
+aws s3 ls terraform-scripts-state
+aws s3api get-object --bucket terraform-scripts-state --key s3-website.tfstate ./test.txt | cat test.txt
+```
+
+we can directly check the resources in the state using terraform command `terraform state list`
+
+In case we already have a local state file and we wish to migrate to remote s3, we must  
+reinitialize the configuration to update the backend (after the backend s3 block is included in the .tf file).
+Terraform detects your updated backend and confirms that you wish to migrate your state file to remote S3 
+backend.

@@ -77,7 +77,9 @@ To do this, go to workspace settings and select local for execution mode.
 Initialize the project, which downloads the aws plugin and ec2 instance module from terraform public registry
 https://registry.terraform.io/modules/terraform-aws-modules/ec2-instance/aws/latest
 
-Note: we can use `terraform get` to only download the modules in blocks specified in the `.tf` files.
+When using a new module for the first time, you must run either terraform init or terraform get to install the module.
+When you run these commands, Terraform will install any new modules in the .terraform/modules directory within your 
+configuration's working directory. 
 
 ```bash
 terraform init
